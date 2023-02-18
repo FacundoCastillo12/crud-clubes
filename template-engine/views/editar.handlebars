@@ -5,56 +5,85 @@
   <form class="row g-3 d-flex p-2" action="/editar/{{data.tla}}" method="POST" enctype="multipart/form-data">
     <div class="col-md-3">
       <label for="nombre" class="form-label">Nombre del Equipo</label>
-      <input type="text" class="form-control" id="nombre" placeholder="Arsenal FC" value="{{data.name}}">
+      <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Arsenal FC" value="{{data.name}}">
     </div>
     <div class="col-md-2">
       <label for="nombre-abreviado" class="form-label">Nombre Abreviado</label>
-      <input type="text" class="form-control" id="nombre-abreviado" placeholder="Arsenal" value="{{data.shortName}}">
+      <input type="text" class="form-control" id="nombre-abreviado" name="nombreAbreviado" placeholder="Arsenal"
+        value="{{data.shortName}}">
     </div>
     <div class="col-md-2">
       <label for="nombre-acronimo" class="form-label">Acronimo de tres letras</label>
-      <input type="text" class="form-control" id="nombre-acronimo" placeholder="ARS" value="{{data.tla}}">
+      <input type="text" class="form-control" id="nombre-acronimo" name="tla" placeholder="ARS" value="{{data.tla}}">
     </div>
     <div class="col-md-5">
       <label for="input-email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="input-email" placeholder="arsenalTop16@gmail.com" value="{{data.email}}">
+      <input type="email" class="form-control" id="input-email" name="email" placeholder="arsenalTop16@gmail.com"
+        value="{{data.email}}">
     </div>
     <div class="col-3">
       <label for="input-direccion" class="form-label">Pais</label>
-      <input type="text" class="form-control" id="input-direccion" placeholder="Inglaterra" value="{{data.area.name}}">
+      <input type="text" class="form-control" id="input-direccion" name="paisNombre" value="{{data.area.name}}">
     </div>
     <div class="col-3">
       <label for="input-telefono" class="form-label">Telefono</label>
-      <input type="text" class="form-control" id="input-telefono" placeholder="+264123456" value="{{data.phone}}">
+      <input type="text" class="form-control" id="input-telefono" name="telefono" placeholder="+264123456"
+        value="{{data.phone}}">
     </div>
     <div class="col-6">
       <label for="input-pagina" class="form-label">Pagina web</label>
-      <input type="text" class="form-control" id="input-pagina" placeholder="http://www.arsenal.com" value="{{data.website}}">
+      <input type="text" class="form-control" id="input-pagina" name="paginaWeb" value="{{data.website}}">
     </div>
     <div class="col-3">
       <label for="input-fundacion" class="form-label">Año de fundacion</label>
-      <input type="text" class="form-control" id="input-fundacion" placeholder="1887" value="{{data.founded}}">
+      <input type="text" class="form-control" id="input-fundacion" name="fundacion" placeholder="1887"
+        value="{{data.founded}}">
     </div>
     <div class="col-2">
       <label for="input-primer-color" class="form-label">Color</label>
-      <input type="text" class="form-control" id="input-colores" placeholder="Azul / Rojo" value="{{data.clubColors}}">
+      <input type="text" class="form-control" id="input-colores" name="colores" placeholder="Azul / Rojo"
+        value="{{data.clubColors}}">
     </div>
     <div class="col-7">
       <label for="input-estadio" class="form-label">Estadio</label>
-      <input type="text" class="form-control" id="input-estadio" placeholder="El Monumental" value="{{data.venue}}">
+      <input type="text" class="form-control" id="input-estadio" name="estadio" placeholder="El Monumental"
+        value="{{data.venue}}">
     </div>
-     <div class="col-5">
+    <div class="col-5">
       <label for="input-direccion" class="form-label">Direccion</label>
-      <input type="text" class="form-control" id="input-direccion" placeholder="Avenida siempre viva" value="{{data.address}}">
+      <input type="text" class="form-control" id="input-direccion" name="direccion" placeholder="Avenida siempre viva"
+        value="{{data.address}}">
+    </div>
+    <div class="col-md-7">
+      <label for="imagen-url" class="form-label">Escudo URL</label>
+      <input type="text" class="form-control" id="imagen-url" name="imagenURL"
+        placeholder="https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg" value="{{data.crestUrl}}">
+    </div>
+    <div class="col-12 mt-4">
+      <input type="file" class="form-control" id="imagen-equipo" name="imagen" aria-describedby="inputGroupFileAddon04"
+        aria-label="Upload">
     </div>
     <div class="col-6">
-        <img class="rounded mx-auto d-block" src="{{data.crestUrl}}" alt="Imagen del escudo de {{data.name}}">
+      <p>Imagen url</p>
+      <img class="rounded mx-auto d-block" src="{{data.crestUrl}}" alt="Imagen del escudo de {{data.name}}">
     </div>
+    {{#if data.crestLocal}}
+    <div class="col-6">
+      <p>Imagen local</p>
+      <img class="rounded mx-auto d-block" src="{{data.crestLocal}}" alt="Imagen del escudo de {{data.name}} local">
+    </div>
+    {{/if}}
     <div class="col-6">
       <button type="submit" class="btn btn-primary align-self-end" id="boton-enviar" value="Subir">Enviar</button>
     </div>
     <div class="col-6 d-flex flex-row-reverse">
-      <a href="/" class="btn btn-primary justify-content-end" id="boton-retroceder-equipo" value="retroceder">Retroceder</a>
+      <a href="/" class="btn btn-primary justify-content-end" id="boton-retroceder-equipo"
+        value="retroceder">Retroceder</a>
     </div>
+    {{#if data.error}}
+    <div class="row g-3 d-flex p-2">
+      <p class="error">{{data.error}}</p>
+    </div>
+    {{/if}}
   </form>
 </div>

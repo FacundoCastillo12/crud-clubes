@@ -4,15 +4,19 @@
     <td>{{item.name}}</td>
     <td>{{item.area.name}}</td>
     <td>
-      <img class="imagen" src="{{item.crestUrl}}">
+      {{#if item.crestUrl}}
+      <img class="imagen" src="{{item.crestUrl}}" name="url-imagen">
+      {{else}}
+      <img class="imagen" src="{{item.crestLocal}}" name="local-imagen">
+      {{/if}}
     </td>
     <td>
       <div class="btn-group" role="group" aria-label="Basic outlined example">
-        <a href="/ver/{{item.tla}}"  class="btn btn-outline-primary">Ver</a>
+        <a href="/ver/{{item.tla}}" class="btn btn-outline-primary">Ver</a>
         <a href="/editar/{{item.tla}}" class="btn btn-outline-primary">Editar</a>
         <a href="/eliminar/{{item.tla}}" class="btn btn-outline-primary">Eliminar</a>
       </div>
     </td>
   </tr>
-  {{/each}}
+  {{/each}} 
 </tbody>

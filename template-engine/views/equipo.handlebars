@@ -9,7 +9,8 @@
     </div>
     <div class="col-md-2">
       <label for="nombre-abreviado" class="form-label">Nombre Abreviado</label>
-      <input type="text" class="form-control" id="nombre-abreviado" placeholder="Arsenal" value="{{data.shortName}}" disabled>
+      <input type="text" class="form-control" id="nombre-abreviado" placeholder="Arsenal" value="{{data.shortName}}"
+        disabled>
     </div>
     <div class="col-md-2">
       <label for="nombre-acronimo" class="form-label">Acronimo de tres letras</label>
@@ -17,19 +18,23 @@
     </div>
     <div class="col-md-5">
       <label for="input-email" class="form-label">Email</label>
-      <input type="email" class="form-control" id="input-email" placeholder="arsenalTop16@gmail.com" value="{{data.email}}" disabled>
+      <input type="email" class="form-control" id="input-email" placeholder="arsenalTop16@gmail.com"
+        value="{{data.email}}" disabled>
     </div>
     <div class="col-3">
       <label for="input-direccion" class="form-label">Pais</label>
-      <input type="text" class="form-control" id="input-direccion" placeholder="Inglaterra" value="{{data.area.name}}" disabled>
+      <input type="text" class="form-control" id="input-direccion" placeholder="Inglaterra" value="{{data.area.name}}"
+        disabled>
     </div>
     <div class="col-3">
       <label for="input-telefono" class="form-label">Telefono</label>
-      <input type="text" class="form-control" id="input-telefono" placeholder="+264123456" value="{{data.phone}}" disabled>
+      <input type="text" class="form-control" id="input-telefono" placeholder="+264123456" value="{{data.phone}}"
+        disabled>
     </div>
     <div class="col-6">
       <label for="input-pagina" class="form-label">Pagina web</label>
-      <input type="text" class="form-control" id="input-pagina" placeholder="http://www.arsenal.com" value="{{data.website}}" disabled>
+      <input type="text" class="form-control" id="input-pagina" placeholder="http://www.arsenal.com"
+        value="{{data.website}}" disabled>
     </div>
     <div class="col-3">
       <label for="input-fundacion" class="form-label">Año de fundacion</label>
@@ -37,22 +42,31 @@
     </div>
     <div class="col-2">
       <label for="input-primer-color" class="form-label">Color</label>
-      <input type="text" class="form-control" id="input-colores" placeholder="Azul / Rojo" value="{{data.clubColors}}" disabled>
+      <input type="text" class="form-control" id="input-colores" placeholder="Azul / Rojo" value="{{data.clubColors}}"
+        disabled>
     </div>
     <div class="col-7">
       <label for="input-estadio" class="form-label">Estadio</label>
-      <input type="text" class="form-control" id="input-estadio" placeholder="El Monumental" value="{{data.venue}}" disabled>
+      <input type="text" class="form-control" id="input-estadio" placeholder="El Monumental" value="{{data.venue}}"
+        disabled>
     </div>
-     <div class="col-5">
+    <div class="col-5">
       <label for="input-direccion" class="form-label">Direccion</label>
-      <input type="text" class="form-control" id="input-direccion" placeholder="Avenida siempre viva" value="{{data.address}}" disabled>
+      <input type="text" class="form-control" id="input-direccion" placeholder="Avenida siempre viva"
+        value="{{data.address}}" disabled>
     </div>
+    {{#if data.crestUrl}}
     <div class="col-6">
-        <img class="rounded mx-auto d-block" src="{{data.crestUrl}}" alt="Imagen del escudo de {{data.name}}">
+      <img class="rounded mx-auto d-block" src="{{data.crestUrl}}" alt="Imagen del escudo de {{data.name}} archivo">
     </div>
+    {{else}}
+    <div class="col-6">
+      <img class="rounded mx-auto d-block" src="{{data.crestLocal}}" alt="Imagen del escudo de {{data.name}} local">
+    </div>
+    {{/if}}
 
   </form>
-    <table class="table table-dark">
+  <table class="table table-dark">
     <thead>
       <tr>
         <th scope="col">Nombre</th>
@@ -68,33 +82,8 @@
 
     </tbody>
   </table>
-      <div class="col-6 d-flex flex-row-reverse mt-4">
-      <a href="/" class="btn btn-primary justify-content-end" id="boton-retroceder-equipo" value="retroceder">Retroceder</a>
-    </div>
-</div>
-<!-- enctype="multipart/form-data" es lo que nos permite subir un archivo al servidor 
-    "id": 57,
-    "area": {
-      "id": 2072,
-      "name": "England"
-    },
-    "name": "Arsenal FC",
-    "shortName": "Arsenal",
-    "tla": "ARS",
-    "crestUrl": "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg",
-    "address": "75 Drayton Park London N5 1BU",
-    "phone": "+44 (020) 76195003",
-    "website": "http://www.arsenal.com",
-    "email": "info@arsenal.co.uk",
-    "founded": 1886,
-    "clubColors": "Red / White",
-    "venue": "Emirates Stadium",
-    "lastUpdated": "2020-05-14T02:41:34Z"
-    <form action="/form" method="POST" enctype="multipart/form-data">
-  <div class="input-group">
-
-    <button class="btn btn-outline-secondary" type="button" id="button" value="Subir">Button</button>
+  <div class="col-6 d-flex flex-row-reverse mt-4">
+    <a href="/" class="btn btn-primary justify-content-end" id="boton-retroceder-equipo"
+      value="retroceder">Retroceder</a>
   </div>
-
-</form>
--->
+</div>
