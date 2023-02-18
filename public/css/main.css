@@ -11,3 +11,9 @@
 * {
   color: white;
 }
+.error{
+  font-size: 2em;
+  color: red;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: center;
+}
