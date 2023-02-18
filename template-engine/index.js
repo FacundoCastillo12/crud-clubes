@@ -3,7 +3,15 @@ const express = require('express');
 const multer = require('multer');
 const exphbs = require('express-handlebars');
 
-const upload = multer({ dest: './uploads/imagenes' });
+const almacenamiento = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './uploads/imagenes');
+  },
+  filename(req, file, cb) {
+    cb(null, `${file.originalname}`);
+  },
+});
+const upload = multer({ storage: almacenamiento });
 
 const PUERTO = 8080;
 const app = express();
@@ -13,6 +21,9 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, '../public')));
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(`${__dirname}/uploads`));
 
 app.get('/', (req, res) => {
   const equipos = JSON.parse(fs.readFileSync('./data/equipos.db.json'));
@@ -22,7 +33,7 @@ app.get('/', (req, res) => {
   });
 });
 function obtenerEqipoJSON(equiposJSON, value) {
-  const equipo = equiposJSON.filter((equipo) => equipo.tla === value);
+  const equipo = equiposJSON.filter((elemento) => elemento.tla === value);
   return equipo[0];
 }
 app.get('/formulario', (req, res) => {
@@ -32,81 +43,102 @@ app.get('/formulario', (req, res) => {
 });
 app.get('/ver/:tla', (req, res) => {
   const equipos = JSON.parse(fs.readFileSync('./data/equipos.db.json'));
-  const jugadores = JSON.parse(fs.readFileSync(`./data/equipos/${req.params['tla']}.json`));
-  const equipo = jugadores.squad
-  const data = obtenerEqipoJSON(equipos, `${req.params['tla']}`);
+  const jugadores = JSON.parse(fs.readFileSync(`./data/equipos/${req.params.tla}.json`));
+  const equipo = jugadores.squad;
+  const data = obtenerEqipoJSON(equipos, `${req.params.tla}`);
   res.render('equipo', {
     layout: 'ui',
     data,
     equipo,
   });
 });
+
+app.get('/eliminar/:tla', (req, res) => {
+  const equipos = JSON.parse(fs.readFileSync('./data/equipos.db.json'));
+  const equiposRestantes = equipos.filter((equipo) => equipo.tla !== `${req.params.tla}`);
+  fs.writeFileSync('./data/equipos.db.json', JSON.stringify(equiposRestantes));
+  fs.unlinkSync(`./data/equipos/${req.params.tla}.json`);
+  res.redirect('/');
+});
+app.get('/reiniciar', (req, res) => {
+  const equiposTotales = JSON.parse(fs.readFileSync('./data/equipos.json'));
+  fs.writeFileSync('./data/equipos.db.json', JSON.stringify(equiposTotales));
+  res.redirect('/');
+});
+function crearNuevoEquipo(equipo, file) {
+  const nuevoEquipo = {
+    //  id: equipo. No tiene.
+    name: equipo.nombre,
+    shortName: equipo.nombreAbreviado,
+    tla: equipo.tla,
+    email: equipo.email,
+    area: {
+      //    id: equipo.area.id, // NO se usa
+      name: equipo.paisNombre,
+    },
+    phone: equipo.telefono,
+    website: equipo.paginaWeb,
+    founded: equipo.fundacion,
+    address: equipo.direccion,
+    clubColors: equipo.colores,
+    venue: equipo.estadio,
+    crestUrl: equipo.imagenURL,
+    crestLocal: file === 'escudo' ? equipo.crestLocal : `/imagenes/${file}`,
+  };
+  return nuevoEquipo;
+}
+function guardarTlaEquipos(equipos) {
+  const equiposTla = [];
+  equipos.forEach((equipo) => {
+    equiposTla.push(equipo.tla);
+  });
+  return equiposTla;
+}
+app.post('/form', upload.single('imagen'), (req, res) => {
+  const equipos = JSON.parse(fs.readFileSync('./data/equipos.db.json'));
+  const comrpobarTla = guardarTlaEquipos(equipos);
+  if (comrpobarTla.find((elemento) => elemento === req.body.tla) !== undefined) {
+    res.render('form', {
+      layout: 'ui',
+      data: {
+        error: `El tla ${req.body.tla} ya fue usado.`,
+      },
+    });
+  } else if (req.file !== undefined) {
+    equipos.push(crearNuevoEquipo(req.body, req.file.originalname));
+    fs.writeFileSync('./data/equipos.db.json', JSON.stringify(equipos));
+    fs.writeFileSync(
+      `./data/equipos/${req.body.tla}.json`,
+      JSON.stringify(crearNuevoEquipo(req.body, req.file.originalname)),
+    );
+    res.redirect('/');
+  } else {
+    equipos.push(crearNuevoEquipo(req.body, req.file !== undefined));
+    fs.writeFileSync('./data/equipos.db.json', JSON.stringify(equipos));
+    fs.writeFileSync(
+      `./data/equipos/${req.body.tla}.json`,
+      JSON.stringify(crearNuevoEquipo(req.body, req.file !== undefined)),
+    );
+    res.redirect('/');
+  }
+});
 app.get('/editar/:tla', (req, res) => {
   const equipos = JSON.parse(fs.readFileSync('./data/equipos.db.json'));
-  const data = obtenerEqipoJSON(equipos, `${req.params['tla']}`);
+  const data = obtenerEqipoJSON(equipos, `${req.params.tla}`);
   res.render('editar', {
     layout: 'ui',
     data,
   });
 });
-app.get('/eliminar/:tla', (req, res) => {
+app.post('/editar/:tla', upload.single('imagen'), (req, res) => {
   const equipos = JSON.parse(fs.readFileSync('./data/equipos.db.json'));
-  const equiposRestantes = equipos.filter((equipo) => equipo.tla !== `${req.params['tla']}`);
+  const equiposRestantes = equipos.filter((equipo) => equipo.tla !== `${req.params.tla}`);
+  if (req.file !== undefined) {
+    equiposRestantes.push(crearNuevoEquipo(req.body, req.file.originalname));
+  } else {
+    equiposRestantes.push(crearNuevoEquipo(req.body, req.file !== undefined));
+  }
   fs.writeFileSync('./data/equipos.db.json', JSON.stringify(equiposRestantes));
   res.redirect('/');
 });
-app.get('/reiniciar', (req, res)=>{
-  const equiposTotales = JSON.parse(fs.readFileSync('./data/equipos.json'));
-  fs.writeFileSync('./data/equipos.db.json', JSON.stringify(equiposTotales));
-  res.redirect('/');
-});
-app.post('/form', upload.single('imagen'), (req, res) => {
-
-});
 app.listen(PUERTO);
-const jugadores = JSON.parse(fs.readFileSync(`./data/equipos/ARS.json`));
-console.log(`Escuchando en http://localhost:${PUERTO}`);
-
-
-//  console.log(obtenerEqipoJSON(equipos, 'ARS'))
-
-/*
-  push al array de equipos. Lo remplaza obviamente, agregando el nuevo. Dentro de ese push
-  Tiene que estar un objetc. Con todas las caracteristicas.
-  funcion crear nuevo equipo. Primero larga un equipo. EL json y el archivo para la imagen..
-
-
-
-    "id": 57,
-    "area": {
-      "id": 2072,
-      "name": "England"
-    },
-    "name": "Arsenal FC",
-    "shortName": "Arsenal",
-    "tla": "ARS",
-    "crestUrl": "https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg",
-    "address": "75 Drayton Park London N5 1BU",
-    "phone": "+44 (020) 76195003",
-    "website": "http://www.arsenal.com",
-    "email": "info@arsenal.co.uk",
-    "founded": 1886,
-    "clubColors": "Red / White",
-    "venue": "Emirates Stadium",
-    "lastUpdated": "2020-05-14T02:41:34Z"
-
-    app.get('/equipos', (req, res) => {
-  const equipos = JSON.parse(fs.readFileSync('./data/equipos.json'));
-  res.render('equipo', {
-    layout: 'ui',
-    data: {
-      mensaje: 'Éxito!',
-      nombreArchivo: req.file.filename,
-    },
-  });
-  console.log(equipos);
-  res.setHeader('Content-Type', 'application/json');
-
-  res.send(equipos);
-});
-*/
